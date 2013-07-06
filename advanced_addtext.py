@@ -6,8 +6,6 @@ import sys
 import mwclient
 import mwparserfromhell
 
-from theobot import password
-
 # CC-BY-SA Theopolisme
 
 ABOUT = """
