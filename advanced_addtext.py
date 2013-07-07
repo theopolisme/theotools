@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import sys
+import re
 
 import mwclient
 import mwparserfromhell
@@ -64,20 +65,33 @@ class ParsedPage(object):
 		self.CATEGORIES = []
 		self.CAT_INDEX = None
 		self._cats()
+		self._nav()
+
+	def _nav(self):
+		return
+		# IN PROGRESS
+		#for section in self.wikicode.get_sections():
+		#	print section
 
 	def _cats(self):
 		for node in self.wikicode.ifilter():
 			if unicode(node.title).find("Category:") != -1:
 				index = self.wikicode.index(node)
-				self.CATEGORIES += node.title
+				self.CATEGORIES.append(node.title)
 				if index > self.CAT_INDEX:
 					self.CAT_INDEX = index 
 		if self.CAT_INDEX == None:
 			self.CAT_INDEX = self.bottom # Hacky, just adds cats to the very bottom
 
 	def insert(self,text,position):
-		if position == 'category':
-			self.wikicode.insert(self.CAT_INDEX+1,"\n"+text)
+		if position in ['category', 'stub']: # stub tags are inserted beneath the categories
+			insert_catname = re.sub(r"""\[\[(.*?)\]\]""",r"""\1""",text)
+			if insert_catname not in self.CATEGORIES:
+				self.wikicode.insert(self.CAT_INDEX+1,"\n"+text)
+			else:
+				pass # the category is already present
+		elif position == 'nav':
+			pass
 		else:
 			raise NotImplementedError("""Sorry, but "{}" insertion isn't currently implemented.""".format(position))
 
@@ -101,7 +115,9 @@ def main():
 
 	site = mwclient.Site('en.wikipedia.org')
 	page = site.Pages[pagename]
-	print add_text(inserttext,page.edit(),type_of_insert)
+
+	result = add_text(inserttext,page.edit(),type_of_insert)
+	print result
 
 if __name__ == '__main__':
 	main()
