@@ -34,7 +34,7 @@ import password
 TAG_TO_SEARCH = 'visualeditor'
 TOTAL_EDITS = 10000
 TYPE_OF_EDITS = "!bot|!anon"
-EXCLUDE_STRINGS = ['AWB', 'TW', 'HG', 'STiki', 'Undid']
+EXCLUDE_STRINGS = ['AWB', 'TW', 'HG', 'STiki', 'AFCH', 'Undid']
 
 def exclude(comment):
 	for excl_string in EXCLUDE_STRINGS:
